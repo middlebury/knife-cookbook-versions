@@ -19,11 +19,11 @@ module NodeCookbookVersions
     banner "knife node cookbook versions NODE"
 
     option :show_column_header,
-      :short => "-H",
-      :long => "--header",
-      :description => "Show a column header",
+      :short => "-n",
+      :long => "--no-header",
+      :description => "Don't show a column header",
       :boolean => true | false,
-      :default => false
+      :default => true
 
     def run
       @node_name = @name_args.first
