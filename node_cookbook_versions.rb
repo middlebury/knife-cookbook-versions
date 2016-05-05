@@ -13,6 +13,7 @@ module NodeCookbookVersions
 
     deps do
       require 'chef/node'
+      require "chef/environment"
     end
 
     banner "knife node cookbook versions NODE"
@@ -30,9 +31,17 @@ module NodeCookbookVersions
         ui.error "#{@node_name} doesn't have any cookbook_versions defined. Be sure to add the 'cookbook_versions' cookbook and run chef-client to populate this attribute."
         exit 2
       end
+
+      env_data = Chef::Environment.load(node.chef_environment)
+      columns = '%-15.15s %-15.15s %-20.20s %-10.10s %-10.10s %-20.20s'
+
       for cookbook, version in node['cookbook_versions']
-        frozen = `knife cookbook show #{cookbook} #{version} | grep frozen`
-        puts sprintf('%-30.30s %-20.20s %s', cookbook, version, frozen)
+        frozen = `knife cookbook show #{cookbook} #{version} | grep frozen | awk '{print $2}'`.strip()
+        constraint = env_data.cookbook_versions[cookbook]
+        if constraint.nil?
+          constraint = "no constraint"
+        end
+        puts sprintf(columns, @node_name, node.chef_environment, cookbook, version, frozen, constraint)
       end
     end
   end
