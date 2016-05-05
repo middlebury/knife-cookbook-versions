@@ -18,6 +18,13 @@ module NodeCookbookVersions
 
     banner "knife node cookbook versions NODE"
 
+    option :show_column_header,
+      :short => "-H",
+      :long => "--header",
+      :description => "Show a column header",
+      :boolean => true | false,
+      :default => false
+
     def run
       @node_name = @name_args.first
       if @node_name.nil?
@@ -34,6 +41,11 @@ module NodeCookbookVersions
 
       env_data = Chef::Environment.load(node.chef_environment)
       columns = '%-15.15s %-15.15s %-20.20s %-10.10s %-10.10s %-20.20s'
+
+      if config[:show_column_header]
+        puts sprintf(columns, 'node', 'environment', 'cookbook', 'version', 'frozen?', 'env. constraint')
+        puts '--------------------------------------------------------------------------------------------------------------------'
+      end
 
       for cookbook, version in node['cookbook_versions']
         frozen = `knife cookbook show #{cookbook} #{version} | grep frozen | awk '{print $2}'`.strip()
