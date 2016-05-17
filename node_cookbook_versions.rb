@@ -47,7 +47,7 @@ module NodeCookbookVersions
         puts '-------------------------------------------------------------------------------------------------'
       end
 
-      for cookbook, version in node['cookbook_versions']
+      for cookbook, version in node['cookbook_versions'].sort
         frozen = `knife cookbook show #{cookbook} #{version} | grep frozen | awk '{print $2}'`.strip()
         constraint = env_data.cookbook_versions[cookbook]
         if constraint.nil?
